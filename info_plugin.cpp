@@ -177,20 +177,20 @@ void info_plugin::plugin_initialize(const variables_map& options) {
    //FC_LOG_AND_RETHROW();
 }
 
-#define CALL(api_name, api_handle, api_namespace, call_name, http_response_code) \
+#define CALL(api_name, api_handle, api_namespace, call_name) \
 {std::string("/v1/" #api_name "/" #call_name), \
    [api_handle](string, string body, url_response_callback cb) mutable { \
           try { \
              if (body.empty()) body = "{}"; \
-             fc::variant result( api_handle.call_name(fc::json::from_string(body).as<api_namespace::call_name ## _params>()) ); \
-             cb(http_response_code, std::move(result)); \
+             auto result = api_handle.call_name(fc::json::from_string(body).as<api_namespace::call_name ## _params>()); \
+             cb(200, fc::json::to_string(result)); \
           } catch (...) { \
              http_plugin::handle_exception(#api_name, #call_name, body, cb); \
           } \
        }}
 
-#define PERMISSION_CALL(call_name,http_response_code) CALL(info, permission_api, permission_info, call_name, http_response_code)
-#define BLOCK_CALL(call_name,http_response_code) CALL(info, block_api, block_info, call_name, http_response_code)
+#define PERMISSION_CALL(call_name) CALL(info, permission_api, permission_info, call_name)
+#define BLOCK_CALL(call_name) CALL(info, block_api, block_info, call_name)
 
 void info_plugin::plugin_startup() {
    // Make the magic happen
@@ -199,8 +199,8 @@ void info_plugin::plugin_startup() {
 
     ilog( "starting info_plugin" );
     app().get_plugin<http_plugin>().add_api({
-         PERMISSION_CALL(get_permission, 200),
-         BLOCK_CALL(get_block_info,200)
+         PERMISSION_CALL(get_permission),
+         BLOCK_CALL(get_block_info)
     });
 }
 
