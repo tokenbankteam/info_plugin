@@ -147,7 +147,7 @@ info_apis::get_block_info_results block_info::get_block_info(const block_info::g
     const auto& rm = db.get_resource_limits_manager();
     return {
             db.head_block_time(),
-            db.fork_db_head_block_num(),
+            db.last_irreversible_block_num(),
             get_ref_block_prefix(fc::to_string(db.last_irreversible_block_num())),
     };
 }
