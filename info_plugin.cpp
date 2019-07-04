@@ -57,9 +57,7 @@ permission_info::get_permission_results permission_info::get_permission( const g
          const auto& permission_links = d.get_index<permission_link_index, by_permission_name>();
          auto link = permission_links.lower_bound(boost::make_tuple(perm->owner));
          action act;
-         if (link == permission_links.end()) {
-            elog("link is empty");
-         }
+
 
          while(link != permission_links.end()) {
             if(link->account != perm->owner){
@@ -70,17 +68,17 @@ permission_info::get_permission_results permission_info::get_permission( const g
                continue;
             }
 
-            elog("contract name: ${e}",("e",link->code));
-            elog("action name: ${e}",("e",link->message_type));
+            //elog("contract name: ${e}",("e",link->code));
+            //elog("action name: ${e}",("e",link->message_type));
             act.contract_name = link->code;
             act.action_name = link->message_type;
             actions.push_back(act);
             ++link;
          }
 
-          elog("actions: ${e}",("e",actions));
+          //elog("actions: ${e}",("e",actions));
           result.permissions.push_back( permission{ perm->name, parent, perm->auth.to_authority(), actions} );
-          elog("result.permissions: ${e}",("e",result.permissions));
+          //elog("result.permissions: ${e}",("e",result.permissions));
           ++perm;
        }
        return result;
@@ -150,7 +148,7 @@ info_apis::get_block_info_results block_info::get_block_info(const block_info::g
     const auto& rm = db.get_resource_limits_manager();
     return {
             db.head_block_time(),
-            db.fork_db_pending_head_block_num(),
+            db.last_irreversible_block_num(),
             get_ref_block_prefix(fc::to_string(db.last_irreversible_block_num())),
     };
 }
