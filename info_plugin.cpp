@@ -7,6 +7,7 @@
 #include <eosio/chain_plugin/chain_plugin.hpp>
 #include <eosio/chain/permission_object.hpp>
 #include <eosio/chain/permission_link_object.hpp>
+#include <fc/variant.hpp>
 #include <fc/io/json.hpp>
 namespace eosio {
    using namespace info_apis;
@@ -180,7 +181,7 @@ void info_plugin::plugin_initialize(const variables_map& options) {
           try { \
              if (body.empty()) body = "{}"; \
              auto result = api_handle.call_name(fc::json::from_string(body).as<api_namespace::call_name ## _params>()); \
-             cb(200, fc::json::to_string(result)); \
+             cb(200, fc::variant(result)); \
           } catch (...) { \
              http_plugin::handle_exception(#api_name, #call_name, body, cb); \
           } \
