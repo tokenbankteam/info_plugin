@@ -133,7 +133,7 @@ namespace eosio {
                 block_num = fc::to_uint64(block_num_or_id);
             } catch (...) {}
 
-            if (block_num.valid()) {
+            if (block_num.has_value()) {
                 block = db.fetch_block_by_number(*block_num);
             } else {
                 try {
@@ -145,7 +145,7 @@ namespace eosio {
 
             EOS_ASSERT(block, unknown_block_exception, "Could not find block: ${block}", ("block", block_num_or_id));
 
-            uint32_t ref_block_prefix = block->id()._hash[1];
+            uint32_t ref_block_prefix = block->calculate_id()._hash[1];
 
             return ref_block_prefix;
         }

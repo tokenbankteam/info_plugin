@@ -24,7 +24,7 @@ namespace eosio {
     using chain::name;
     using chain::uint128_t;
     using chain::public_key_type;
-    using fc::optional;
+    using std::optional;
     using boost::container::flat_set;
 
 
