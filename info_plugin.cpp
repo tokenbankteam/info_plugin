@@ -12,7 +12,7 @@
 namespace eosio {
     using namespace info_apis;
     using namespace chain;
-    static appbase::abstract_plugin &_info_plugin = app().register_plugin<info_plugin>();
+    static auto &_info_plugin = application::register_plugin<info_plugin>();
 
     class info_plugin_impl {
     public:
@@ -188,7 +188,7 @@ namespace eosio {
           try { \
              if (body.empty()) body = "{}"; \
              fc::variant result( api_handle.call_name(fc::json::from_string(body).as<api_namespace::call_name ## _params>()) ); \
-             cb(http_response_code, std::move(result)); \
+             cb(http_response_code, fc::time_point::maximum(), std::move(result)); \
           } catch (...) { \
              http_plugin::handle_exception(#api_name, #call_name, body, cb); \
           } \
@@ -206,7 +206,7 @@ namespace eosio {
         app().get_plugin<http_plugin>().add_api({
                                                         PERMISSION_CALL(get_permission, 200),
                                                         BLOCK_CALL(get_block_info, 200)
-                                                });
+                                                }, appbase::exec_queue::read_only);
     }
 
     void info_plugin::plugin_shutdown() {

@@ -3,7 +3,7 @@
  *  @copyright defined in eos/LICENSE
  */
 #pragma once
-#include <appbase/application.hpp>
+#include <eosio/chain//application.hpp>
 #include <eosio/chain/authority.hpp>
 #include <eosio/chain/account_object.hpp>
 #include <eosio/chain/block.hpp>
@@ -92,7 +92,7 @@ namespace info_apis {
 /**
  *  This is a template plugin, intended to serve as a starting point for making new plugins
  */
-class info_plugin : public appbase::plugin<info_plugin> {
+class info_plugin : public plugin<info_plugin> {
 public:
    info_plugin();
    virtual ~info_plugin();
