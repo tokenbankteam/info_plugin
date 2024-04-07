@@ -152,11 +152,10 @@ namespace eosio {
 
 
         info_apis::get_block_info_results block_info::get_block_info(const block_info::get_block_info_params &) const {
-            const auto &rm = db.get_resource_limits_manager();
             return {
                     db.head_block_time(),
                     db.last_irreversible_block_num(),
-                    get_ref_block_prefix(fc::to_string(db.last_irreversible_block_num())),
+                    get_ref_block_prefix(std::to_string(db.last_irreversible_block_num())),
             };
         }
 
@@ -184,11 +183,12 @@ namespace eosio {
 
 #define CALL(api_name, api_handle, api_namespace, call_name, http_response_code) \
 {std::string("/v1/" #api_name "/" #call_name), \
-   [api_handle](string, string body, url_response_callback cb) mutable { \
-          try { \
+    api_category::chain_ro,\
+   [api_handle](string&&, string&& body, url_response_callback&& cb) mutable { \
+    try { \
              if (body.empty()) body = "{}"; \
              fc::variant result( api_handle.call_name(fc::json::from_string(body).as<api_namespace::call_name ## _params>()) ); \
-             cb(http_response_code, fc::time_point::maximum(), std::move(result)); \
+             cb(http_response_code, std::move(result)); \
           } catch (...) { \
              http_plugin::handle_exception(#api_name, #call_name, body, cb); \
           } \
@@ -206,7 +206,7 @@ namespace eosio {
         app().get_plugin<http_plugin>().add_api({
                                                         PERMISSION_CALL(get_permission, 200),
                                                         BLOCK_CALL(get_block_info, 200)
-                                                }, appbase::exec_queue::read_only);
+                                                }, appbase::exec_queue::read_only,appbase::priority::medium_low);
     }
 
     void info_plugin::plugin_shutdown() {
