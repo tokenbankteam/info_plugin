@@ -154,7 +154,7 @@ namespace eosio {
         info_apis::get_block_info_results block_info::get_block_info(const block_info::get_block_info_params &) const {
             return {
                     db.head_block_time(),
-                    db.last_irreversible_block_num(),
+                    db->fork_db_root().block_num(),
                     get_ref_block_prefix(std::to_string(db.last_irreversible_block_num())),
             };
         }
